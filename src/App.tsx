@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Input } from './components/Input/Input';
 
@@ -39,46 +39,24 @@ export function App() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const [errorName, setErrorName] = useState<string[]>([]);
-  const [errorEmail, setErrorEmail] = useState<string[]>([]);
-  const [errorPassword, setErrorPassword] = useState<string[]>([]);
-
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [disabledButton, setDisabledButton] = useState<boolean>(false);
-
-  const nameChangeHandler = (value: ChangeEvent<HTMLInputElement>) => {
-    setName(value.currentTarget.value);
-  };
-
-  const emailChangeHandler = (value: ChangeEvent<HTMLInputElement>) => {
-    setEmail(value.currentTarget.value);
-  };
-
-  const passwordChangeHandler = (value: ChangeEvent<HTMLInputElement>) => {
-    setPassword(value.currentTarget.value);
-  };
 
   function sendForm(e: { preventDefault: () => void }) {
     e.preventDefault();
     setDisabledButton(true);
     register({ name, email, password }).catch((r) => {
-      setDisabledButton(false);
       let objectResponse: ObjectResponseType = JSON.parse(r.message);
       if (objectResponse.status === 'error') {
-        objectResponse.errors.forEach((item) => {
-          if (item.field === 'name') {
-            setErrorName([...errorName, item.message]);
-          }
-          if (item.field === 'email') {
-            setErrorEmail([...errorEmail, item.message]);
-          }
-          if (item.field === 'password') {
-            setErrorPassword([...errorPassword, item.message]);
-          }
-        });
+        setErrors(
+          objectResponse.errors.reduce((acc, item) => {
+            acc[item.field] = [...(acc[item.field] || []), item.message];
+            return acc;
+          }, {} as Record<string, string[]>)
+        );
       }
-    });
+    }).finally(() => setDisabledButton(false));
   }
-  console.log(errorPassword);
 
   return (
     <>
@@ -88,27 +66,27 @@ export function App() {
             <Input
               value={name}
               type={'text'}
-              onChange={nameChangeHandler}
-              inputLabel={'Name'}
-              errorText={errorName}
+              onChange={setName}
+              inputLabel="Name"
+              errorText={errors.name}
             />
           </li>
           <li className="form__item">
             <Input
               value={email}
               type={'email'}
-              onChange={emailChangeHandler}
-              inputLabel={'Email'}
-              errorText={errorEmail}
+              onChange={setEmail}
+              inputLabel="Email"
+              errorText={errors.email}
             />
           </li>
           <li className="form__item">
             <Input
               value={password}
               type={'password'}
-              onChange={passwordChangeHandler}
-              inputLabel={'Password'}
-              errorText={errorPassword}
+              onChange={setPassword}
+              inputLabel="Password"
+              errorText={errors.password}
             />
           </li>
           <li className="form__item">
