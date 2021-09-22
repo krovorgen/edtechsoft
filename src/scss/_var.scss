@@ -1,0 +1,16 @@
+$green-700: #04202c;
+$green-600: #304040;
+$green-500: #5b7065;
+$green-100: #c9d1c8;
+
+@mixin visually-hidden() {
+  position: absolute;
+  margin: -1px;
+  padding: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  border: 0;
+  white-space: nowrap;
+  clip: rect(0, 0, 0, 0);
+}

@@ -1,0 +1,30 @@
+@import "var";
+@import "mixins";
+@import "global";
+
+.form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  &__item {
+    input {
+      width: 100%;
+    }
+
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.input {
+  &--error {
+    border: 1px solid #f00;
+  }
+}
+
+.error-message {
+  color: #f00;
+}
